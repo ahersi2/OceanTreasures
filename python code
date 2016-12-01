@@ -1,0 +1,160 @@
+import random
+
+
+class OceanTreasures:
+    
+    def __init__(self):
+        self.__board=[]  # this is the list ocean board with the initial '~'
+        for i in range(0,15):
+            self.__board.append(list('~'*60))
+        
+        self.__chests=[]    #this is the list of random treasure chests
+        for i in range(0,3):
+            x=random.randint(0,59)
+                y=random.randint(0,14)
+                    self.__chests.insert(i,[x,y])
+        self.__treasurefound=0
+            
+            def drawBoard(self):    #this function creates displays the ocean treasures board
+        head_num_line='  '*2        #This creates the Headline of the numbers
+        for i in range(1,6):
+            head_num_line+=(' '*9)+str(i)
+
+            num_line=' '*3          #This is the creation of the number line of the board
+            for i in range(0,6):
+            for i in range(0,10):
+                num_line+=str(i)
+            print(head_num_line)
+            print(num_line)
+            lineList=[]
+            for i in range(15):    # this makes lines of the ocean board with their y line coordinate
+            if i<10:
+                line='%2d '%i+''.join(self.__board[i]) + '%2d'%i
+            else:
+                line='%2d '%i+''.join(self.__board[i]) + ' %2d'%i
+            lineList.append(line)
+for i in (lineList):
+    print(i)
+        print(head_num_line)
+        print(num_line)
+    
+    
+    def getChests(self):    # returns the treasure chest list
+        return self.__chests
+
+
+def getTreasuresFound(self):# returns the number of treasure chests found
+    return self.__treasurefound
+    
+    def dropSonar(self,x,y,sonar):  #puts the sonar letter onto the location of the board
+        assert x in range(0,60),("Error: x coordinate is out of board range")
+        assert y in range(0,15), ("Error: y coordinate is out of board range")
+        if self.__board[y][x]!='~':
+            raise Exception
+        else:
+            self.__board[y][x]=sonar
+
+
+def checkDistance(self,x,y):     #Checks the distance the users guess is from a near buried treasure
+    assert x in range(0,60),("Error: x coordinate is out of board range")
+        assert y in range(0,15), ("Error: y coordinate is out of board range")
+        
+        smallest_distance= 200
+        distance_x= 200
+        distance_y= 200
+        for chestx,chesty in self.__chests:
+            dis_x=abs(chestx-x)
+            dis_y=abs(chesty-y)
+            distance= (dis_x)**2+(dis_y)**2
+            if distance< smallest_distance: # checks for the nearest treasure chest by distance
+                smallest_distance= distance
+                distance_x=dis_x
+                distance_y=dis_y
+    if smallest_distance==0:        #condition if the guess is on the location of the chest
+        self.__chests.remove([x,y])
+            self.__treasurefound+=1
+            return 0
+        elif distance_x<10 and distance_y<6: #condition if the guess is within the range of 9 and 5
+            if distance_x==0:
+                return -(distance_y)
+            elif distance_y==0:
+                return distance_x
+            elif 0.5*distance_x<distance_y:
+                return distance_x
+            else:
+                return -(distance_y)
+elif distance_x<10 and distance_y>6:    #condition when one distance is in range but the other is not
+    return "Nothing detected"
+        else:
+            return "Nothing detected"
+
+def display_Instructions(self): # this displays instructions of the game when user needs help
+    print('Instructions: Welcome to the Ocean treasures game.\n The objective of the game is to use your sonar devices to discover buried treasure in the ocean.\n The ocean is represented as a 60 by 15 grid which has x (59 units) and y(14 units) coordinates.\n The treasure chests are in random locations across the ocean. You can drop one of your 20 sonar\n devices at a time into the ocean, which will reveal the distance you are from the nearest\n treasure chest. If a number is displayed on the location you dropped your device, this means you are\n x units away from the chest on the x axis.However if the letters a,b,c,d,e are displayed this means\n you are 1,2,3,4,5 units away respectively on the y axis from the nearest chest.\n If a O is displayed this means the sonar device did not pick up any buried treasure nearby.\n If you drop a sonar at the exact location of the treasure chest a symbol X will appear signalling\n you found a chest. You have only have 20 sonar devices to find all 3 buried treasure chests.\n Use them wisely!')
+    
+    def sonar_letter(self,distance):   #this function returns the sonar letter inputs for the board
+        letter_dic={-1:'a',-2:'b',-3:'c',-4:'d',-5:'e'}
+        if distance==0:
+            sonar='X'
+        elif distance in range(0,10):
+            sonar= str(distance)
+        elif distance in letter_dic:
+            sonar=letter_dic[distance]
+        else:
+            sonar='O'
+        return sonar
+
+
+
+def main():
+    game=OceanTreasures()       #created game instance
+    gameLoop=True
+    game.drawBoard()
+    num_sonars=20           #intial sonar devices
+    while gameLoop:         # main game loop
+        while True:         #input validation loop
+            try:
+                print('Were do you want to drop the sonar?')
+                userinput= (input('Enter x y(x in [0..59] and y in [0..14])(or Q to quit for help: '))
+                if userinput.upper()== 'Q': #user quit conditon
+                    print("The chests were in: "+str(game.getChests())+'\nThank you for playing Ocean Treasures')
+                    return
+                if userinput.upper()=='H':  #user help condition
+                    game.display_Instructions()
+                    print('Were do you want to drop the sonar?')
+                    userinput= (input('Enter x y(x in [0..59] and y in [0..14])(or Q to quit for help: '))
+                user_input=userinput.split()
+                x= int(user_input[0])
+                y= int(user_input[1])
+                distance=game.checkDistance(x,y) #checks the userguess distance from a nearby chest
+            except ValueError:
+                print("Please try again")
+            except:
+                print("Please try again and stay within the range")
+            else:
+                break
+        print(game.getChests())
+        sonar= game.sonar_letter(distance)  #returns the sonar letter to put on the ocean board
+        try:
+            game.dropSonar(x,y,sonar)   #places the sonar on to the board
+        except:
+            print("You already dropped a sonar there,you lost another sonar device")
+        game.drawBoard()
+        num_sonars-=1       #decreases the number of sonar devices when dropped
+        print("You have "+str(num_sonars)+" sonar devices available. Treasures found : "+str(game.getTreasuresFound())+" still to be found: "+str(len(game.getChests())))
+
+        if game.getChests()==[]:  #condition if there are no more treasure chests
+            print("Well done! You found all the 3 treasure Chests using "+str(num_sonars)+" out of 20 sonar devices.")
+            gameLoop=False
+        if num_sonars==0:   #condition if the user runs out of sonar devices
+            print("You lost all your 20 sonar devises.The remaining chests were in:"+str(game.getChests()))
+            gameLoop=False
+
+
+
+
+
+
+
+
+
+main()
